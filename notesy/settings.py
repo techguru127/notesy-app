@@ -9,6 +9,12 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
+# GitHub Actions sets CI=true; conftest may load after settings import.
+if os.getenv("CI"):
+    os.environ.setdefault("DJANGO_SECRET_KEY", "test-secret-key-not-for-production")
+    os.environ.setdefault("DJANGO_DEBUG", "True")
+    os.environ.setdefault("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,testserver")
+
 RUNNING_TESTS = "pytest" in sys.modules
 
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
